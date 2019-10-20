@@ -1,6 +1,8 @@
 package com.example.inclass07;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +26,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GetTracksAsyncTask.IGetTracksData {
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
     TextView tv_limit;
     EditText editText;
     RadioGroup rg_rating;
@@ -33,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements GetTracksAsyncTas
     SeekBar sb_limit;
     int progress = 5;
     String radioselected = "s_track_rating";
-    ListView lv_results;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +53,15 @@ public class MainActivity extends AppCompatActivity implements GetTracksAsyncTas
         rb_artist = findViewById(R.id.rb_artist);
         pb_loading = findViewById(R.id.pb_loading);
         sb_limit = findViewById(R.id.sb_limit);
-        lv_results = findViewById(R.id.lv_results);
+        recyclerView = findViewById(R.id.recyclerView);
 
         pb_loading.setVisibility(View.GONE);
 
         setTitle("MusixMatch Track Search");
 
         rb_track.setChecked(true);
+
+
 
         sb_limit.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -151,9 +159,19 @@ public class MainActivity extends AppCompatActivity implements GetTracksAsyncTas
 
     @Override
     public void GetTracksData(final ArrayList<TrackDetails> trackDetails) {
+        //recycler view code
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
         Log.d("bagh", "inside interface");
-        TracksArrayAdapter tracksArrayAdapter = new TracksArrayAdapter(MainActivity.this, R.layout.track_list, trackDetails);
+        mAdapter = new TracksArrayAdapterRecyclerView(trackDetails);
+        recyclerView.setAdapter(mAdapter);
+
+
+        /*TracksArrayAdapter tracksArrayAdapter = new TracksArrayAdapter(MainActivity.this, R.layout.track_list, trackDetails);
         lv_results.setAdapter(tracksArrayAdapter);
 
         lv_results.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -164,6 +182,6 @@ public class MainActivity extends AppCompatActivity implements GetTracksAsyncTas
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
             }
-        });
+        });*/
     }
 }
